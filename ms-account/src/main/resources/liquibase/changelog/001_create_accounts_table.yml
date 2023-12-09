@@ -1,0 +1,48 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001_create_accounts_table
+      author: Elvin Taghizade
+      changes:
+        - createTable:
+            tableName: accounts
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: bigserial
+                  constraints:
+                    nullable: false
+              - column:
+                  name: iban
+                  type: varchar(35)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: currency
+                  type: varchar(5)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: balance
+                  type: numeric
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(3)
+                  defaultValueComputed: now()
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(3)
+                  defaultValueComputed: now()
+            remarks: This is users table to save and update users

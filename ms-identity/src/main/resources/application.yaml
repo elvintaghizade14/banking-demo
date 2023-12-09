@@ -1,0 +1,116 @@
+server:
+  port: 8081
+logging:
+  level:
+    ROOT: info
+    com.azercell.banking.common: DEBUG
+    com.azercell.banking.identity: DEBUG
+
+feign:
+  client:
+    config:
+      default:
+        loggerLevel: basic
+
+spring:
+  application:
+    name: ms-identity
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  main:
+    banner-mode: "off"
+  liquibase:
+    change-log: classpath:liquibase/changelog-master.yml
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_POSTGRES_USER:postgres}
+    password: ${DB_POSTGRES_PASS:postgres}
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/postgres}
+    hikari:
+      poolName: MsIdentityHikariPool
+      auto-commit: false
+  jpa:
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+    properties:
+      hibernate.id.new_generator_mappings: true
+      hibernate.connection.provider_disables_autocommit: true
+
+#management:
+#  server:
+#    port: 8091
+#  security:
+#    enabled: false
+#  endpoints:
+#    enabled-by-default: false
+#    web:
+#      exposure:
+#        include:
+#          - info
+#          - health
+#  endpoint:
+#    health:
+#      enabled: true
+#      show-details: always
+#      probes:
+#        enabled: true
+
+info:
+  application:
+    name: ${spring.application.name}
+    java-version: '@javaVersion@'
+    gradle-version: '@gradleVersion@'
+    spring-boot-version: '@springBootVersion@'
+    spring-cloud-version: '@springCloudVersion@'
+    common-lib-version: '@bankingCommonLibVersion@'
+
+application:
+  interceptor:
+    common-request:
+      exclude-path-patterns: /swagger**/**,/**/api-docs,/error,/favicon.ico
+  swagger:
+    base-package: "com.azercell.banking.identity.controller"
+    paths: "/.*"
+    apiInfo:
+      version: 1.0
+      title: "${spring.application.name} Rest API"
+      description: "Spring Boot REST API for ${spring.application.name}"
+  client:
+    account:
+      url: ${MS_ACCOUNT_URL:http://localhost:8082}
+
+  security:
+    authentication:
+      public-key: ${APP_PUBLIC_KEY:MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6u/em4EI1sa+GinSOQ7ysr369BK1TsLi3MkxZQ+izQ2OrSUVN3Eer20vduDxezuhsNWySIbJdJj4SV7mIoKeyi8Yw87/3Mb7/Ln3FxwlyP3HusrFnbF/FnPoYRsKH9NmU+rhVLs+7Ij16Ia37seGoX3AYtlUUjeaHFNO6eLmpqK4EtIX5GcWYt6s3SoeP26/RrlNDEYwZ16jsIZOc3gKT2U2vDiVKMVBDv9UDJJs2Zd3au0rut98+yDSKGBsXU1dDbJxLNfaKuqNkmcVhp/cBZ8F41G51xgp+TdPwuEHzt2iaXQ125cJS8cnQjzdUP69U6CyTeKMYnLkhF0bW1SvDQIDAQAB}
+      private-key: ${APP_PRIVATE_KEY:MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDq796bgQjWxr4aKdI5DvKyvfr0ErVOwuLcyTFlD6LNDY6tJRU3cR6vbS924PF7O6Gw1bJIhsl0mPhJXuYigp7KLxjDzv/cxvv8ufcXHCXI/ce6ysWdsX8Wc+hhGwof02ZT6uFUuz7siPXohrfux4ahfcBi2VRSN5ocU07p4uamorgS0hfkZxZi3qzdKh4/br9GuU0MRjBnXqOwhk5zeApPZTa8OJUoxUEO/1QMkmzZl3dq7Su633z7INIoYGxdTV0NsnEs19oq6o2SZxWGn9wFnwXjUbnXGCn5N0/C4QfO3aJpdDXblwlLxydCPN1Q/r1ToLJN4oxicuSEXRtbVK8NAgMBAAECggEBALyDiwEGUfxc7u95fVkReIcaUEMGu/seAAGfYwYvvLeC2GhwqAybtT6YgwyFxN7YY47Mekkd9oqbsCbXghxQ6W9cySddcwtJk6sf4Xfmux8DG//zcwxs/4gZq243zzDoZWSSxQpDUWNlJsTVTMPJ0GrGx9fJgZKTURLHejvMOL2drDXS+L9P3pvoahfAQzJyTIbtLwWOQszutOfFQn7i1QMy5XjsgY/JNEzKDf2ZCCKLIVO9EVIxH7qv8xDG4deowika8GlM3BgLzPq9YxzW8HNtPQAL5mOAG4d8iYSxhFQoIl3jVSZBhvn7s9u5AAE3kzuNh7YDkyWFd017JHJSN6ECgYEA93ZiqO8/pD4tkbJHN48bv87ClVIYdej6Zg9xEzpwQbu8r+Nb0pRhKuYFl52A3kQQ7uVmA92dtvuOd7p3mTYmYMA+6IhT5POy0dwkA2+ubAAhuFBnCTe0tdbM7mxaz82Qfxhx9fAiohP8/6pMzmg1BPfrLOQCd5GMz4X6NpVUH1UCgYEA8wrbqKS9Sr3n+YhpNoDI2bcYUBdPL3RNZnmvNXLO/hKL3+QN5EVAQvndbxJDN86Wn4EwQ6j2HQqSAkEc/lSfXEr5Ete2UlGqryKNNoCITx2zPWBSpYa1pZs1PWGC8AMSMTICkh/3/genvOCXHTS5FqS3q+wyzfcCIMyVTuutoNkCgYAQH4iCFUSCQQLbEVCOkCZwstn+vKCXXhyidbMaW55gygibNScQa1aBYwdOP5bb5Hdt+UhSTCgweedoaZ/NPbf2adAvemJs8mvePIekKayloMSRq7tq4FRH3Lzxc+He1Dfr7/3M1l6LTN4ZElF6yVNbBYQvIpP+kl8oTkRlNgmLGQKBgQCzTglsS82TPLPNtsPYf/6uEJSRUgELg4Qu3AtVJVRswYYMMZXGGQkl4G1rKlAI9hLNrmPLJvYbytaZbyxSvl+rmWxUaGyMItAH0TfZQ85MgB7iYxPWJqIQgYcvt6cAJ2Peg4S+BXPSKBeqEw+pbmI2wGL5JZL9vQQG6qgkx18bUQKBgQDVbTEXTaKcwU9t3QBLOVxXlf51b5nA2XrfcaH5FD69TgTGO728PvvS+Q5OCp+mB4gn1ILJDfMEJ0ze6LESS489k8wXcNHbP63AayXJyfKzmRnPJGUvQHZXM2afMpIsD2P490kc1JwYCHPeuNMc7bsyKwrKJnxVuZaFvD4DQXledg==}
+      access-token-validity-in-seconds: 3600
+      refresh-token-validity-in-seconds: 7200
+
+  redis:
+    address: ${REDIS_ADDRESS:redis://localhost:6379}
+    #    password: ${REDIS_PASSWORD:redis123}
+    connection-pool-size: 4
+    connection-minimum-idle-size: 2
+    token-time-to-live: 3600
+
+common:
+  swagger:
+    enabled: true
+  interceptor:
+    enabled: true
+  logging:
+    enabled: true
+  error-handler:
+    enabled: true
+  content-caching:
+    enabled: true
+  openfeign:
+    enabled: true

@@ -1,0 +1,94 @@
+plugins {
+    id 'jacoco'
+//    id 'checkstyle'
+    id 'java-library'
+    id 'maven-publish'
+    id 'org.sonarqube' version "$sonarqubeVersion"
+    id 'org.springframework.boot' version "$springBootVersion"
+    id 'org.owasp.dependencycheck' version "$owaspDependencyCheckVersion"
+    id 'io.spring.dependency-management' version "$springDependencyManagementVersion"
+}
+
+group = 'com.azercell.banking'
+version = "$projectVersion"
+description = 'Banking Common Library'
+sourceCompatibility = "$jdkVersion" as Object
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+jar {
+    enabled = true
+}
+
+bootJar {
+    enabled = false
+}
+
+dependencies {
+    // spring-boot dependencies
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-aop"
+    implementation "org.springframework.cloud:spring-cloud-starter-sleuth"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+    // 3rd party dependencies
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    implementation "org.apache.commons:commons-lang3:${apacheCommonsVersion}"
+    implementation "io.github.openfeign:feign-okhttp:${openFeignOkHttpVersion}"
+    implementation "io.springfox:springfox-boot-starter:${springfoxStarterVersion}"
+    implementation "net.logstash.logback:logstash-logback-encoder:${logstashLogbackVersion}"
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+javadoc.options.addStringOption('Xdoclint:none', '-quiet') // disabled javadoc warnings
+
+//checkstyle {
+//    toolVersion "$checkstyleToolVersion"
+//}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifact("""build/libs/common-lib-${projectVersion}-plain.jar""") {
+                extension 'jar'
+            }
+        }
+    }
+
+/*
+    for publishing into nexus repository:
+    repositories {
+        maven {
+            url "$nexusUrl"
+            credentials {
+                username "$nexusUsername"
+                password "$nexusPassword"
+            }
+            setAllowInsecureProtocol(true)
+        }
+    }
+*/
+}

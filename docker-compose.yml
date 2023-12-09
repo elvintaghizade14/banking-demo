@@ -1,0 +1,101 @@
+version: "3"
+
+services:
+  db_redis:
+    container_name: banking_redis
+    image: redis
+    ports:
+      - "6379:6379"
+    restart: always
+
+  db_identity:
+    container_name: banking_identity_db
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  db_account:
+    container_name: banking_account_db
+    image: postgres
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  bff-web:
+    container_name: banking_bff_web
+    image: banking/bff-web:0.1
+    ports:
+      - "8080:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    build:
+      context: bff-web
+      dockerfile: Dockerfile
+    network_mode: host
+
+  ms-identity:
+    container_name: banking_ms_identity
+    image: banking/ms-identity:0.1
+    ports:
+      - "8081:8081"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    build:
+      context: ms-identity
+      dockerfile: Dockerfile
+    depends_on:
+      - db_identity
+      - db_redis
+    network_mode: host
+
+  ms-account:
+    container_name: banking_ms_account
+    image: banking/ms-account:0.1
+    ports:
+      - "8082:8082"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    build:
+      context: ms-account
+      dockerfile: Dockerfile
+    depends_on:
+      - db_account
+    network_mode: host
+
+#  zookeeper:
+#    container_name: unitech_zookeeper
+#    image: confluentinc/cp-zookeeper:latest
+#    ports:
+#      - "22181:2181"
+#    environment:
+#      ZOOKEEPER_CLIENT_PORT: 2181
+#      ZOOKEEPER_TICK_TIME: 2000
+
+#  kafka:
+#    container_name: unitech_kafka
+#    image: confluentinc/cp-kafka:latest
+#    ports:
+#      - "29092:29092"
+#    depends_on:
+#      - zookeeper
+
+#  kafdrop:
+#    container_name: unitech_kafdrop
+#    image: obsidiandynamics/kafdrop
+#    ports:
+#      - "9000:9000"
+#    expose:
+#      - 9000
+#    depends_on:
+#      - zookeeper
+#      - kafka

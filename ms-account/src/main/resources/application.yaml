@@ -1,0 +1,99 @@
+server:
+  port: 8082
+logging:
+  level:
+    ROOT: info
+    com.azercell.banking.common: DEBUG
+    com.azercell.banking.account: DEBUG
+
+feign:
+  client:
+    config:
+      default:
+        loggerLevel: basic
+
+spring:
+  application:
+    name: ms-account
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  main:
+    banner-mode: "off"
+  liquibase:
+    change-log: classpath:liquibase/changelog-master.yml
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_POSTGRES_USER:postgres}
+    password: ${DB_POSTGRES_PASS:postgres}
+    url: ${DB_URL:jdbc:postgresql://localhost:5433/postgres}
+    hikari:
+      poolName: MsAccountHikariPool
+      auto-commit: false
+  jpa:
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+    properties:
+      hibernate.id.new_generator_mappings: true
+      hibernate.connection.provider_disables_autocommit: true
+
+#management:
+#  server:
+#    port: 8092
+#  security:
+#    enabled: false
+#  endpoints:
+#    enabled-by-default: false
+#    web:
+#      exposure:
+#        include:
+#          - info
+#          - health
+#  endpoint:
+#    health:
+#      enabled: true
+#      show-details: always
+#      probes:
+#        enabled: true
+
+info:
+  application:
+    name: ${spring.application.name}
+    java-version: '@javaVersion@'
+    gradle-version: '@gradleVersion@'
+    spring-boot-version: '@springBootVersion@'
+    spring-cloud-version: '@springCloudVersion@'
+    common-lib-version: '@bankingCommonLibVersion@'
+
+application:
+  interceptor:
+    common-request:
+      exclude-path-patterns: /swagger**/**,/**/api-docs,/error,/favicon.ico
+  swagger:
+    base-package: "com.azercell.banking.account.controller"
+    paths: "/.*"
+    apiInfo:
+      version: 1.0
+      title: "${spring.application.name} Rest API"
+      description: "Spring Boot REST API for ${spring.application.name}"
+
+common:
+  swagger:
+    enabled: true
+  interceptor:
+    enabled: true
+  logging:
+    enabled: true
+  error-handler:
+    enabled: true
+  content-caching:
+    enabled: true
+  openfeign:
+    enabled: true

@@ -1,0 +1,138 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+//    id 'checkstyle'
+    id 'org.sonarqube' version "$sonarqubeVersion"
+    id 'org.springframework.boot' version "$springBootVersion"
+    id 'org.owasp.dependencycheck' version "$owaspDependencyCheckVersion"
+    id 'io.spring.dependency-management' version "$springDependencyManagementVersion"
+}
+
+group = 'com.azercell.banking'
+version = "$projectVersion"
+description = 'ms-account'
+sourceCompatibility = "$jdkVersion" as Object
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+}
+
+jar {
+    enabled = false
+}
+
+dependencies {
+    // spring framework's lib
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.security:spring-security-crypto"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    implementation "org.springframework.cloud:spring-cloud-starter-sleuth"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
+
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+    implementation "com.azercell.banking:common-lib:${bankingCommonLibVersion}"
+
+    // 3-rd party libs
+    implementation "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
+    implementation "io.jsonwebtoken:jjwt-impl:${jjwtVersion}"
+    implementation "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
+
+    implementation "com.google.guava:guava:${guavaVersion}"
+    implementation "commons-io:commons-io:${commonsIoVersion}"
+    implementation "org.apache.commons:commons-lang3:${apacheCommonsVersion}"
+    implementation "io.github.openfeign:feign-okhttp:${openFeignOkHttpVersion}"
+    implementation "io.springfox:springfox-boot-starter:${springfoxStarterVersion}"
+    implementation "net.logstash.logback:logstash-logback-encoder:${logstashLogbackVersion}"
+
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testImplementation "com.tngtech.archunit:archunit-junit5:${archUnitVersion}"
+
+    // db related
+    runtimeOnly "org.postgresql:postgresql"
+    implementation "org.liquibase:liquibase-core"
+    implementation "org.redisson:redisson:${redissonVersion}"
+    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+    implementation "com.vladmihalcea:hibernate-types-52:${hibernateTypesVersion}"
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+javadoc.options.addStringOption('Xdoclint:none', '-quiet') // disabled javadoc warnings
+
+//checkstyle {
+//    toolVersion "$checkstyleToolVersion"
+//}
+
+jacoco {
+    toolVersion "$jacocoToolVersion"
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+    finalizedBy jacocoTestReport
+}
+
+//jacocoTestReport {
+//    reports {
+//        xml.enabled true
+//    }
+//    afterEvaluate {
+//        classDirectories.setFrom(files(classDirectories.files.collect {
+//            fileTree(dir: it, exclude: [
+//                    'com/azercell/banking/account/MsIdentityApplication.java',
+//                    'com/azercell/banking/account/client/**',
+//                    'com/azercell/banking/account/config/**',
+//                    'com/azercell/banking/account/dao/entity/**',
+//                    'com/azercell/banking/account/dao/repository/**',
+//                    'com/azercell/banking/account/exception/**',
+//                    'com/azercell/banking/account/mapper/**',
+//                    'com/azercell/banking/account/messaging/event/**',
+//                    'com/azercell/banking/account/security/**',
+//                    'com/azercell/banking/account/model/**'
+//            ])
+//        }))
+//    }
+//
+//    sonarqube {
+//        properties {
+//            property 'sonar.coverage.exclusions',
+//                    "**/MsIdentityApplication.java," +
+//                            "**/client/**," +
+//                            "**/config/**," +
+//                            "**/entity/**," +
+//                            "**/repository/**," +
+//                            "**/exception/**," +
+//                            "**/mapper/**," +
+//                            "**/messaging/event/**," +
+//                            "**/security/**," +
+//                            "**/model/**"
+//        }
+//    }
+//
+//    finalizedBy jacocoTestCoverageVerification
+//}
+
+//tasks['sonarqube'].dependsOn test

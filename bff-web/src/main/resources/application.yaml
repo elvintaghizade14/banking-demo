@@ -1,0 +1,89 @@
+server:
+  port: 8080
+logging:
+  level:
+    ROOT: info
+    com.azercell.banking.bffweb: DEBUG
+
+feign:
+  client:
+    config:
+      default:
+        loggerLevel: basic
+
+spring:
+  application:
+    name: bff-web
+  main:
+    banner-mode: "off"
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+#management:
+#  server:
+#    port: 8090
+#  security:
+#    enabled: false
+#  endpoints:
+#    enabled-by-default: false
+#    web:
+#      exposure:
+#        include:
+#          - info
+#          - health
+#  endpoint:
+#    health:
+#      enabled: true
+#      show-details: always
+#      probes:
+#        enabled: true
+
+info:
+  application:
+    name: ${spring.application.name}
+    java-version: '@javaVersion@'
+    gradle-version: '@gradleVersion@'
+    spring-boot-version: '@springBootVersion@'
+    spring-cloud-version: '@springCloudVersion@'
+    common-lib-version: '@bankingCommonLibVersion@'
+
+application:
+  interceptor:
+    common-request:
+      exclude-path-patterns: /swagger**/**,/**/api-docs,/error,/favicon.ico
+  swagger:
+    base-package: "com.azercell.banking.bffweb.controller"
+    paths: "/.*"
+    apiInfo:
+      version: 1.0
+      title: "${spring.application.name} Rest API"
+      description: "Spring Boot REST API for ${spring.application.name}"
+  client:
+    identity:
+      url: ${MS_IDENTITY_URL:http://localhost:8081}
+    account:
+      url: ${MS_ACCOUNT_URL:http://localhost:8082}
+
+  security:
+    authentication:
+      public-key: ${APP_PUBLIC_KEY:MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6u/em4EI1sa+GinSOQ7ysr369BK1TsLi3MkxZQ+izQ2OrSUVN3Eer20vduDxezuhsNWySIbJdJj4SV7mIoKeyi8Yw87/3Mb7/Ln3FxwlyP3HusrFnbF/FnPoYRsKH9NmU+rhVLs+7Ij16Ia37seGoX3AYtlUUjeaHFNO6eLmpqK4EtIX5GcWYt6s3SoeP26/RrlNDEYwZ16jsIZOc3gKT2U2vDiVKMVBDv9UDJJs2Zd3au0rut98+yDSKGBsXU1dDbJxLNfaKuqNkmcVhp/cBZ8F41G51xgp+TdPwuEHzt2iaXQ125cJS8cnQjzdUP69U6CyTeKMYnLkhF0bW1SvDQIDAQAB}
+
+  redis:
+    address: ${REDIS_ADDRESS:redis://localhost:6379}
+    #    password: ${REDIS_PASSWORD:redis123}
+    connection-pool-size: 4
+    connection-minimum-idle-size: 2
+    token-time-to-live: 3600
+
+common:
+  swagger:
+    enabled: true
+  interceptor:
+    enabled: true
+  logging:
+    enabled: true
+  error-handler:
+    enabled: true
+  content-caching:
+    enabled: true

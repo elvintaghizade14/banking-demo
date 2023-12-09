@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+}
+
+subprojects {
+
+    group 'com.azercell.banking'
+    version '0.0.1'
+    sourceCompatibility = '11'
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url 'https://repo.spring.io/milestone' }
+    }
+
+    apply plugin: 'java'
+    apply plugin: 'jacoco'
+//    apply plugin: 'checkstyle'
+
+//    checkstyle {
+//        toolVersion '8.23'
+//    }
+
+}
+
+//test {
+//    useJUnitPlatform()
+//}

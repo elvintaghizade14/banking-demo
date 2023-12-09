@@ -1,0 +1,22 @@
+server:
+  port: 8082
+
+logging:
+  level:
+    ROOT: info
+    com.azercell.banking.common: DEBUG
+    com.azercell.banking.account: DEBUG
+
+spring:
+  application:
+    name: ms-account
+  main:
+    banner-mode: log
+  datasource:
+    url: jdbc:postgresql://localhost:5433/postgres
+    username: postgres
+    password: postgres
+  jpa:
+    show-sql: true
+    properties:
+      hibernate.format_sql: true

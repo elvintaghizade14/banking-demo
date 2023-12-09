@@ -1,0 +1,53 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002_create_purchases_table.yml
+      author: Elvin Taghizade
+      changes:
+        - createTable:
+            tableName: purchases
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: bigserial
+                  constraints:
+                    nullable: false
+              - column:
+                  name: iban
+                  type: varchar(35)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: currency
+                  type: varchar(5)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: price
+                  type: numeric
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(3)
+                  defaultValueComputed: now()
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(3)
+                  defaultValueComputed: now()
+            remarks: This is purchases table to save and update purchases

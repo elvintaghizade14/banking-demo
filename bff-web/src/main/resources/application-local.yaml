@@ -1,0 +1,14 @@
+server:
+  port: 8080
+
+logging:
+  level:
+    ROOT: info
+    com.azercell.banking.bffweb: DEBUG
+    com.azercell.banking.commonlib: DEBUG
+
+spring:
+  application:
+    name: bff-web
+  main:
+    banner-mode: log
