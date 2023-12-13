@@ -9,11 +9,21 @@ import com.azercell.banking.bffweb.model.dto.request.TopUpRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AccountService {
 
     private final AccountClient accountClient;
+
+    public List<AccountDto> getAccounts() {
+        return accountClient.getAccounts();
+    }
+
+    public AccountDto getAccountByIban(String iban) {
+        return accountClient.getAccountByIban(iban);
+    }
 
     public AccountDto topUp(TopUpRequest request) {
         return accountClient.topUp(request);

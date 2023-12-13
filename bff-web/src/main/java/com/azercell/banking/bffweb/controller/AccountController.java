@@ -10,12 +10,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Validated
 @RestController
@@ -24,6 +28,18 @@ import javax.validation.Valid;
 public class AccountController {
 
     private final AccountService accountService;
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    public ResponseEntity<List<AccountDto>> getAccounts() {
+        return ResponseEntity.ok(accountService.getAccounts());
+    }
+
+    @GetMapping("/by-iban")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    public ResponseEntity<AccountDto> getAccountByIban(@NotBlank @RequestParam String iban) {
+        return ResponseEntity.ok(accountService.getAccountByIban(iban));
+    }
 
     @PutMapping("/top-up")
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")

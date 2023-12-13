@@ -14,7 +14,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Validated
 @RestController
@@ -23,6 +25,16 @@ import javax.validation.constraints.NotNull;
 public class AccountController {
 
     private final AccountService accountService;
+
+    @GetMapping
+    public ResponseEntity<List<AccountDto>> getAccounts() {
+        return ResponseEntity.ok(accountService.getAccounts());
+    }
+
+    @GetMapping("/by-iban")
+    public ResponseEntity<AccountDto> getAccountByIban(@NotBlank @RequestParam String iban) {
+        return ResponseEntity.ok(accountService.getAccountByIban(iban));
+    }
 
     @PostMapping
     public ResponseEntity<AccountDto> createAccount(@Valid @RequestBody CreateAccountRequest request) {

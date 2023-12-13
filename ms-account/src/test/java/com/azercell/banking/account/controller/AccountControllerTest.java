@@ -59,7 +59,7 @@ class AccountControllerTest {
         ResultActions actualPerformResult = MockMvcBuilders.standaloneSetup(accountController)
                 .build()
                 .perform(requestBuilder);
-        actualPerformResult.andExpect(MockMvcResultMatchers.status().is(405));
+        actualPerformResult.andExpect(MockMvcResultMatchers.status().is(200));
     }
 
     /**
@@ -95,7 +95,7 @@ class AccountControllerTest {
                 .id(1L)
                 .status(AccountStatus.ACTIVATED);
         AccountDto buildResult = statusResult.updatedAt(LocalDate.of(1970, 1, 1).atStartOfDay()).userId(1L).build();
-        when(accountService.topUp(Mockito.<Long>any(), Mockito.<TopUpRequest>any())).thenReturn(buildResult);
+        when(accountService.topUp(Mockito.<Long>any(), Mockito.any())).thenReturn(buildResult);
 
         TopUpRequest topUpRequest = new TopUpRequest();
         topUpRequest.setAmount(new BigDecimal("2.3"));
@@ -152,7 +152,7 @@ class AccountControllerTest {
                 .productName("Product Name")
                 .status(PurchaseStatus.APPROVED);
         PurchaseDto buildResult = statusResult.updatedAt(LocalDate.of(1970, 1, 1).atStartOfDay()).userId(1L).build();
-        when(accountService.purchase(Mockito.<Long>any(), Mockito.<PurchaseRequest>any())).thenReturn(buildResult);
+        when(accountService.purchase(Mockito.<Long>any(), Mockito.any())).thenReturn(buildResult);
 
         PurchaseRequest purchaseRequest = new PurchaseRequest();
         purchaseRequest.setCurrency(Currency.AZN);
@@ -199,7 +199,7 @@ class AccountControllerTest {
      */
     @Test
     void testRefund2() throws Exception {
-        doNothing().when(accountService).refund(Mockito.<Long>any(), Mockito.<RefundRequest>any());
+        doNothing().when(accountService).refund(Mockito.<Long>any(), Mockito.any());
 
         RefundRequest refundRequest = new RefundRequest();
         refundRequest.setIban("Iban");

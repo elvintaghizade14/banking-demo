@@ -8,7 +8,8 @@ import com.azercell.banking.account.exception.constant.ErrorMessage;
 import com.azercell.banking.account.mapper.AccountMapper;
 import com.azercell.banking.account.mapper.CustomMapper;
 import com.azercell.banking.account.mapper.PurchaseMapper;
-import com.azercell.banking.account.model.dto.*;
+import com.azercell.banking.account.model.dto.AccountDto;
+import com.azercell.banking.account.model.dto.PurchaseDto;
 import com.azercell.banking.account.model.dto.request.CreateAccountRequest;
 import com.azercell.banking.account.model.dto.request.PurchaseRequest;
 import com.azercell.banking.account.model.dto.request.RefundRequest;
@@ -22,6 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.azercell.banking.account.exception.constant.ErrorMessage.ACCOUNT_NOT_FOUND_MESSAGE;
 import static com.azercell.banking.account.model.enums.AccountStatus.ACTIVATED;
@@ -35,6 +38,19 @@ public class AccountService {
     private final PurchaseMapper purchaseMapper;
     private final AccountRepository accountRepository;
     private final PurchaseRepository purchaseRepository;
+
+    public List<AccountDto> getAccounts() {
+        return accountRepository.findAll()
+                .stream()
+                .map(accountMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public AccountDto getAccountByIban(String iban) {
+        AccountEntity account = accountRepository.findByIban(iban).orElseThrow(()
+                -> DataNotFoundException.of(ACCOUNT_NOT_FOUND_MESSAGE, "", iban));
+        return accountMapper.toDto(account);
+    }
 
     @Transactional
     public AccountDto createAccount(CreateAccountRequest request) {

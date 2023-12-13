@@ -12,6 +12,8 @@ import java.util.Optional;
 @Repository
 public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
 
+    Optional<AccountEntity> findByIban(String iban);
+
     boolean existsByUserIdAndCurrencyAndStatus(Long userId, Currency currency, AccountStatus status);
 
     Optional<AccountEntity> findByUserIdAndIbanAndCurrencyAndStatus(Long userId, String iban,
